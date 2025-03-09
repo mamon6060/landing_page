@@ -1,7 +1,7 @@
 const catchError = require("../../middleware/errors/catchError.js");
 const responseHandler = require("../../utils/responseHandler.js");
 const withTransaction = require("../../middleware/transactions/withTransaction.js");
-const cartService = require("./cart.service.js");
+const orderService = require("./order.service.js");
 
 
 
@@ -20,21 +20,21 @@ class OrderController {
         products: req?.body?.products,
        isActive: req?.body?.isActive,
     };
-    const cartResult = await cartService.createOrder(
+    const orderResult = await orderService.createOrder(
       payload,
       session
     );
     const resDoc = responseHandler(
       201,
-      "cart Created successfully",
-      cartResult
+      "order Created successfully",
+      orderResult
     );
     res.status(resDoc.statusCode).json(resDoc);
   });
 
   getAllOrder = catchError(async (req, res) => {
-    const cartResult = await cartService.getAllOrder();
-    const resDoc = responseHandler(200, "Get All Order", cartResult);
+    const orderResult = await orderService.getAllOrder();
+    const resDoc = responseHandler(200, "Get All Order", orderResult);
     res.status(resDoc.statusCode).json(resDoc);
   });
 
@@ -44,18 +44,18 @@ class OrderController {
       limit: req.query.limit,
       order: req.query.order,
     };
-    const cart = await cartService.getProductWithPagination(payload);
-    const resDoc = responseHandler(200, "Products get successfully", cart);
+    const order = await orderService.getProductWithPagination(payload);
+    const resDoc = responseHandler(200, "Products get successfully", order);
     res.status(resDoc.statusCode).json(resDoc);
   });
 
   getSingleOrder = catchError(async (req, res) => {
     const id = req.params.id;
-    const cartResult = await cartService.getSingleProduct(id);
+    const orderResult = await orderService.getSingleProduct(id);
     const resDoc = responseHandler(
       201,
       "Single Order successfully",
-      cartResult
+      orderResult
     );
     res.status(resDoc.statusCode).json(resDoc);
   });
@@ -70,11 +70,13 @@ class OrderController {
         address: req?.body?.address,
         shippingCost: req?.body?.shippingCost,
         totalCost: req?.body?.totalCost,
+        quantity: req?.body?.quantity,
+        productRef: req?.body?.productRef,
         orderStatus: req?.body?.orderStatus,
         products: req?.body?.products,
        isActive: req?.body?.isActive,
     };
-    const cartResult = await cartService.updateProduct(
+    const orderResult = await orderService.updateProduct(
       id,
     //   payloadFiles,
       payload
@@ -82,7 +84,7 @@ class OrderController {
     const resDoc = responseHandler(
       201,
       "Order Update successfully",
-      cartResult
+      orderResult
     );
     res.status(resDoc.statusCode).json(resDoc);
   });
@@ -90,11 +92,11 @@ class OrderController {
   updateOrderStatus = catchError(async (req, res) => {
     const id = req.params.id;
     const status = req.query.status;
-    const cartResult = await cartService.updateProductStatus(id, status);
+    const orderResult = await orderService.updateProductStatus(id, status);
     const resDoc = responseHandler(
       201,
       "Order Status Update successfully",
-      cartResult
+      orderResult
     );
     res.status(resDoc.statusCode).json(resDoc);
   });
@@ -102,11 +104,11 @@ class OrderController {
   deleteOrder = catchError(async (req, res) => {
     const id = req.params.id;
 
-    const cartResult = await cartService.deleteOrder(id);
+    const orderResult = await orderService.deleteOrder(id);
     const resDoc = responseHandler(
       200,
       "Order Deleted successfully",
-      cartResult
+      orderResult
     );
     res.status(resDoc.statusCode).json(resDoc);
   });
